@@ -11,6 +11,8 @@ Usage from bash:
     python scripts/alpaca.py sell TICKER SHARES [limit_price]
     python scripts/alpaca.py sell-all TICKER
     python scripts/alpaca.py cancel ORDER_ID
+    python scripts/alpaca.py is-trading-day   # exit 0 if today is a US trading day, 1 otherwise
+    python scripts/alpaca.py clock            # current market clock (open/closed, next open/close)
 
 All credentials read from environment variables:
     ALPACA_API_KEY, ALPACA_SECRET_KEY, ALPACA_BASE_URL
@@ -106,6 +108,17 @@ def cancel_order(order_id: str) -> dict:
     return _request("DELETE", f"{BASE}/v2/orders/{order_id}")
 
 
+def get_clock() -> dict:
+    return _request("GET", f"{BASE}/v2/clock")
+
+
+def is_trading_day() -> bool:
+    """True if today (US/Eastern) is a NYSE trading day. False on weekends and holidays."""
+    today = datetime.now(timezone.utc).date().isoformat()
+    cal = _request("GET", f"{BASE}/v2/calendar?start={today}&end={today}")
+    return isinstance(cal, list) and len(cal) > 0
+
+
 def _print(obj):
     print(json.dumps(obj, indent=2, default=str))
 
@@ -138,6 +151,15 @@ def main():
         _print(close_position(args[1]))
     elif cmd == "cancel":
         _print(cancel_order(args[1]))
+    elif cmd == "clock":
+        _print(get_clock())
+    elif cmd == "is-trading-day":
+        if is_trading_day():
+            print("yes")
+            sys.exit(0)
+        else:
+            print("no")
+            sys.exit(1)
     else:
         print(f"Unknown command: {cmd}", file=sys.stderr)
         print(__doc__)

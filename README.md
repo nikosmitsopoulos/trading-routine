@@ -10,15 +10,17 @@ Autonomous paper-trading agent powered by Claude Code routines on Opus 4.7. Trad
 - **Notifications:** Email via Gmail SMTP.
 - **Memory:** Markdown files in `memory/` — committed to git after every run.
 
-## Daily schedule (ET)
+## Schedule (3 routines/day max)
 
-| Routine | Time | What it does |
-|---|---|---|
-| Pre-market | 06:00 Mon–Fri | Research overnight catalysts, draft trade plan |
-| Market open | 09:30 Mon–Fri | Execute trade plan, log trades |
-| Midday | 12:00 Mon–Fri | Cut losers, trim winners, daily-loss check |
-| Close | 16:00 Mon–Fri | Daily report email + journal |
-| Weekly review | 16:00 Friday | Grade the week, adjust strategy if needed |
+All routines start with a holiday/trading-day check via Alpaca calendar API. On non-trading days they exit immediately (zero tokens).
+
+| Routine | Time ET | Time Greece | What it does |
+|---|---|---|---|
+| **Daily** | 10:00 Mon–Fri | 17:00 | Defensive pass on positions → research → execute new buys → update portfolio |
+| **Close** | 16:15 Mon–Fri | 23:15 | EOD summary email + journal lessons |
+| **Weekly Review** | 16:30 Friday | 23:30 | Grade the week, adjust strategy if pattern emerges |
+
+**Run count:** ~11 runs/week (vs 26 in the original 5-routine design).
 
 ## Repo layout
 
@@ -36,11 +38,9 @@ trading-routine/
 │   ├── watchlist.md
 │   └── lessons.md
 ├── routines/                # Prompts for each scheduled run
-│   ├── pre-market.md
-│   ├── market-open.md
-│   ├── midday.md
-│   ├── close.md
-│   └── weekly-review.md
+│   ├── daily.md             # Mon–Fri 10:00 ET (combined research + trades + defense)
+│   ├── close.md             # Mon–Fri 16:15 ET (EOD report)
+│   └── weekly-review.md     # Friday 16:30 ET (weekly reflection)
 └── scripts/                 # Helper utilities
     ├── alpaca.py            # Alpaca REST API wrapper
     ├── yahoo.py             # Yahoo Finance fundamentals
