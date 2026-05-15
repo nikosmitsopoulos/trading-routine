@@ -1,6 +1,6 @@
 # Portfolio Snapshot
 
-**Last updated:** _(will be filled by first routine)_
+**Last updated:** 2026-05-15 (close routine — no Alpaca access, snapshot unverified)
 
 ---
 

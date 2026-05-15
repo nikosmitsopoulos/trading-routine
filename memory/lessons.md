@@ -17,4 +17,10 @@ Review during weekly review. Prune redundant entries.
 
 ---
 
-_(Empty. Will grow over time.)_
+## 2026-05-15 — Routine αποτυχία: λείπουν env vars και network access
+
+**Observation:** Το close routine εκτελέστηκε αλλά δεν μπόρεσε να ολοκληρωθεί. Λείπουν τα env vars `ALPACA_API_KEY`, `ALPACA_SECRET_KEY`, `GMAIL_USER`, `GMAIL_APP_PASSWORD`. Επίσης, το Yahoo Finance (yfinance) έδωσε HTTP 403 — το outbound network policy του cloud environment δεν επιτρέπει πρόσβαση στα external APIs (Alpaca, Yahoo Finance).
+
+**Lesson:** Πριν από οποιαδήποτε trading ενέργεια, ο Nikos πρέπει να ρυθμίσει τα environment variables στο cloud routine: `ALPACA_API_KEY`, `ALPACA_SECRET_KEY`, `ALPACA_BASE_URL`, `GMAIL_USER`, `GMAIL_APP_PASSWORD`. Επίσης, το network policy του environment πρέπει να επιτρέπει πρόσβαση στο `paper-api.alpaca.markets` και `query1.finance.yahoo.com`.
+
+**Applies to:** Όλα τα routines (pre-market, open, midday, close, weekly review).
